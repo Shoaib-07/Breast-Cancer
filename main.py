@@ -24,33 +24,38 @@ nlp = spacy.load("en_core_web_sm")
 
 # AJCC TNM dictionary with improved keywords and context
 ajcc_tnm = {
-    "TX": ["primary", "tumor", "cannot", "be", "assessed", "not", "visualized", "TX:", "pTX", "cTX", "ypTX", "cannot", "evaluate", "measured"],
-    "T0": ["no", "evidence", "of", "primary", "tumor", "identified", "T0:", "pT0", "cT0", "ypT0", "residual", "identifiable"],
-    "Tis (DCIS)": ["ductal", "carcinoma", "in", "situ", "DCIS", "intraductal", "Tis", "(DCIS)", "pTis", "(DCIS)", "non-invasive", "pure"],
-    "Tis (Paget)": ["Paget", "disease", "Paget's", "nipple", "involvement", "only", "Tis", "(Paget)", "pTis", "(Paget)"],
-    "T1mi": ["microinvasion", "microinvasive", "carcinoma", "T1mi", "pT1mi", "invasive", "focus", "≤", "0.1", "cm", "focal"],
-    "T1a": ["tumor", ">", "0.1", "cm", "but", "≤", "0.5", "0.1-0.5", "T1a", "pT1a", "cT1a", "ypT1a", "invasive", "carcinoma", "0.2", "0.3", "0.4"],
-    "T1b": ["tumor", ">", "0.5", "cm", "but", "≤", "1.0", "0.5-1.0", "T1b", "pT1b", "cT1b", "ypT1b", "invasive", "carcinoma", "0.6", "0.7", "0.8", "0.9"],
-    "T1c": ["tumor", ">", "1.0", "cm", "but", "≤", "2.0", "1.0-2.0", "T1c", "pT1c", "cT1c", "ypT1c", "invasive", "carcinoma", "1.2", "1.5", "1.8"],
-    "T2": ["tumor", ">", "2.0", "cm", "but", "≤", "5.0", "2.0-5.0", "T2", "pT2", "cT2", "ypT2", "invasive", "carcinoma", "2.5", "3.0", "4.0", "4.5"],
-    "T3": ["tumor", ">", "5.0", "cm", "size", "greater", "than", "5", "T3", "pT3", "cT3", "ypT3", "invasive", "carcinoma", "5.5", "6.0", "7.0"],
-    "T4a": ["chest", "wall", "invasion", "extension", "T4a", "pT4a", "cT4a", "ypT4a", "invasion", "of", "pectoralis", "muscle", "direct"],
-    "T4b": ["skin", "ulceration", "satellite", "nodules", "edema", "T4b", "pT4b", "cT4b", "ypT4b", "peau", "d'orange", "invasion"],
-    "T4c": ["both", "chest", "wall", "invasion", "and", "skin", "changes", "T4c", "pT4c", "cT4c", "ypT4c", "criteria", "of", "T4a", "T4b"],
-    "T4d": ["inflammatory", "carcinoma", "breast", "cancer", "clinical", "T4d", "pT4d", "cT4d", "ypT4d", "dermal", "lymphatic", "invasion"],
+    # Tumor (T)
+    "TX": ["cannot", "assessed", "inconclusive", "results", "unknown", "tumor", "size", "measurable", "unavailable"],
+    "T0": ["no", "tumor", "found", "absence", "evidence", "disease", "detectable", "lesions", "malignancy"],
+    "Tis (DCIS)": ["ductal", "carcinoma", "in-situ", "non-invasive", "localized", "microcalcifications", "early", "stage"],
+    "Tis (Paget)": ["Paget", "disease", "breast", "nipple", "skin", "lesions", "infiltration", "in-situ"],
+    "T1mi": ["microinvasion", "small", "0.1", "cm", "smaller", "microinvasive", "minimal", "invasion"],
+    "T1a": ["tumor", "0.1", "0.2", "0.3", "0.4", "0.5", "cm", "localized", "early", "stage"],
+    "T1b": ["tumor", "0.5", "0.6", "0.7", "0.8", "0.9", "1.0", "cm", "small", "localized", "early", "invasive"],
+    "T1c": ["tumor", "1", "1.0", "1.1", "1.2", "1.3", "1.4", "1.5", "1.6", "1.7", "1.8", "1.9", "2.0", "2", "cm", "localized", "confined"],
+    "T2": ["tumor", "2", "2.0", "2.1", "2.2", "2.3", "2.4", "2.5", "2.6", "2.7", "2.8", "2.9", "3", "3.0", "3.1", "3.2", "3.3", "3.4", "3.5", "3.6", "3.7", "3.8", "3.9", "4", "4.0", "4.1", "4.2", "4.3", "4.4", "4.5", "4.6", "4.7", "4.8", "4.9", "5", "5.0", "cm", "invasive", "localized", "moderate", "size", "extension"],
+    "T3": ["tumor", "larger", "5", "6", "7", "8", "9", "10", "5.0", "6.0", "7.0", "8.0", "9.0", "10.0", "cm", "advanced", "disease", "invasive", "large", "tumor", "extensive", "infiltration"],
+    "T4a": ["tumor", "spread", "chest", "wall", "locally", "advanced", "direct", "invasion", "thoracic"],
+    "T4b": ["tumor", "spread", "skin", "localized", "invasion", "inflammatory", "cancer", "edema", "ulceration"],
+    "T4c": ["tumor", "spread", "chest", "wall", "skin", "extensive", "disease", "local", "diffuse", "infiltration"],
+    "T4d": ["inflammatory", "breast", "cancer", "aggressive", "redness", "swelling", "rapid", "growth", "painful"],
 
-    "N0": ["no", "regional", "lymph", "node", "metastasis", "negative", "0/16", "0", "of", "17", "N0", "pN0", "cN0", "ypN0"],
-    "N1mi": ["micrometastases", "≤", "2.0", "mm", "<", "2.0", "0.2", "focus", "N1mi", "pN1mi", "small", "cluster"],
-    "N1a": ["metastases", "in", "1-3", "axillary", "nodes", "1", "2", "3", "N1a", "pN1a", "cN1a", "ypN1a"],
-    "N1b": ["metastases", "in", "internal", "mammary", "nodes", "positive", "sentinel", "N1b", "pN1b", "cN1b", "ypN1b"],
-    "N1c": ["metastases", "in", "1-3", "axillary", "and", "internal", "mammary", "nodes", "N1c", "pN1c", "cN1c", "ypN1c"],
-    "N2a": ["metastases", "in", "4-9", "axillary", "nodes", "4", "5", "6", "7", "8", "9", "N2a", "pN2a", "cN2a", "ypN2a"],
-    "N3a": ["metastases", "in", "≥10", "axillary", "nodes", "10", "11", "12", "N3a", "pN3a", "cN3a", "ypN3a"],
+    # Nodes (N)
+    "N0": ["no", "regional", "lymph", "node", "involvement", "metastasis", "not", "involved", "negative", "clear"],
+    "N1mi": ["micrometastasis", "≤", "0.2", "cm", "micrometastatic", "micro", "spread", "subclinical"],
+    "N1a": ["1", "2", "3", "axillary", "lymph", "nodes", "involved", "positive", "metastasis", "detection", "palpable"],
+    "N1b": ["internal", "mammary", "lymph", "nodes", "involved", "positive", "micrometastasis", "regional", "spread"],
+    "N1c": ["both", "axillary", "internal", "mammary", "lymph", "nodes", "involved", "metastatic", "positive"],
+    "N2a": ["4", "5", "6", "7", "8", "9", "axillary", "lymph", "nodes", "involved", "positive", "metastatic", "enlarged", "palpable"],
+    "N2b": ["10", "or", "more", "11", "12", "13", "14", "15", "axillary", "lymph", "nodes", "involved", "positive", "significant", "enlarged", "metastatic"],
+    "N3a": ["lymph", "nodes", "above", "clavicle", "involved", "positive", "supraclavicular", "metastatic", "node", "enlarged"],
+    "N3b": ["infraclavicular", "lymph", "nodes", "involved", "positive", "enlarged", "metastasis", "axillary", "invasive"],
+    "N3c": ["supraclavicular", "lymph", "nodes", "involved", "positive", "regional", "extended", "enlarged"],
 
-    "M0": ["no", "distant", "metastasis", "evidence", "M0", "pM0", "cM0", "negative", "workup"],
-    "M1": ["distant", "metastasis", "present", "evidence", "to", "bone", "liver", "lung", "brain", "M1", "pM1", "cM1"]
+    # Metastasis (M)
+    "M0": ["no", "distant", "metastasis", "identified", "absent", "spread", "absence", "metastatic"],
+    "M1": ["extracapsular", "extension", "deposit", "distant", "metastasis", "lymphovascular", "invasion", "microcalcification", "spread", "systemic", "nodal", "involvement"]
 }
-
 
 
 
@@ -130,8 +135,6 @@ def extract_age_or_dob(report_text):
 
 
 
-
-
 # Improved OCR for scanned PDFs
 def ocr_from_image(pdf_path):
     try:
@@ -155,94 +158,83 @@ def ocr_from_image(pdf_path):
 
 
 # Direct TNM pattern extraction - new function for more accurate stage detection
-# Enhanced TNM pattern extraction with multiple approaches
-def extract_direct_tnm_patterns(text):
-    results = {"T": None, "N": None, "M": None}
+def extract_direct_tnm_patterns(report_text):
+    """
+    Enhanced TNM extraction with precise pattern matching
+    Returns dict with keys 'T', 'N', 'M' and their values
+    """
+    # Normalize text for case-insensitive matching
+    text = report_text.upper().replace(" ", "").replace("-", "")
     
-    # More comprehensive patterns with variations
-    t_patterns = [
-        r"(?:T Classification|T Stage|T category|Tumor Stage|Primary Tumor|pT|cT|ypT|T)[\s:]+([T][0-4][a-d]?(?:\([^)]+\))?|Tis(?:\s*\([^)]+\))?|T[Xx])",
-        r"(?:Tumor|Primary Tumor|Invasive Carcinoma)[^\n.]*?([T][0-4][a-d]?(?:\([^)]+\))?|Tis(?:\s*\([^)]+\))?|T[Xx])",
-        r"Stage.*?([T][0-4][a-d]?(?:\([^)]+\))?|Tis(?:\s*\([^)]+\))?|T[Xx])N[0-3]",
-        r"tumor size.*?(\d+(?:\.\d+)?)\s*(?:mm|cm|centimeter|millimeter)"
-    ]
+    # Initialize result dict
+    result = {'T': None, 'N': None, 'M': None}
     
-    n_patterns = [
-        r"(?:N Classification|N Stage|N category|Nodal Stage|Regional Lymph Nodes|pN|cN|ypN|N)[\s:]+([N][0-3][a-c]?(?:\s?[mi]+)?|N[Xx])",
-        r"(?:lymph node|node).*?([N][0-3][a-c]?(?:\s?[mi]+)?|N[Xx])",
-        r"(\d+)\s*(?:of|\/)\s*(\d+)\s*(?:lymph )?nodes?(?:\s*positive|\s*involved)",
-        r"Stage.*?T[0-4][a-d]([N][0-3][a-c]?)"
-    ]
+    # Enhanced regex patterns for each category
+    patterns = {
+        'T': [
+            r'\bT([0-4X])([A-DI]*(?:\(.*?\))*)\b',  # Standard T patterns
+            r'\bT(IS|ISDCIS|ISPAGET)\b',            # In situ variants
+            r'\bT1(MI|MICROINVASIVE)\b',            # Microinvasion
+            r'(?<![A-Z])T([0-4])(?![A-Z])'          # Standalone T numbers
+        ],
+        'N': [
+            r'\bN([0-3X])([A-CI]*)\b',              # Standard N patterns
+            r'\bN([0-3])(MI|MICRO)\b',              # Micrometastasis
+            r'(?<![A-Z])N([0-3])(?![A-Z])'          # Standalone N numbers
+        ],
+        'M': [
+            r'\bM([01X])\b',                         # Standard M patterns
+            r'(?<![A-Z])M([01])(?![A-Z])',          # Standalone M numbers
+            r'METASTASIS.*?(YES|NO|PRESENT|ABSENT)'  # Metastasis mentions
+        ]
+    }
     
-    m_patterns = [
-        r"(?:M Classification|M Stage|M category|Metastasis Stage|Distant Metastasis|pM|cM|M)[\s:]+([M][0-1]|M[Xx])",
-        r"(?:metastasis|metastases).*?([M][0-1]|M[Xx])",
-        r"Stage.*?T[0-4][a-d]N[0-3][a-c]?([M][0-1])",
-        r"(?:no evidence of|without|with)\s+(?:distant\s+)?metastatic disease"
-    ]
-    
-    # Process T stage
-    for pattern in t_patterns:
-        matches = re.finditer(pattern, text, re.IGNORECASE | re.MULTILINE)
-        for match in matches:
-            # Handle tumor size conversion to T stage
-            if pattern == t_patterns[3]:  # Size pattern
-                size_mm = float(match.group(1))
-                if 'mm' not in match.group():
-                    size_mm *= 10  # Convert cm to mm
+    # Search for each category
+    for category in ['T', 'N', 'M']:
+        for pattern in patterns[category]:
+            matches = re.finditer(pattern, text)
+            for match in matches:
+                # Clean and normalize the matched value
+                value = ''.join([g for g in match.groups() if g])
+                value = value.replace("(", "").replace(")", "")
                 
-                if size_mm <= 1:
-                    results["T"] = "T1mi"
-                elif size_mm <= 5:
-                    results["T"] = "T1a"
-                elif size_mm <= 10:
-                    results["T"] = "T1b"
-                elif size_mm <= 20:
-                    results["T"] = "T1c"
-                elif size_mm <= 50:
-                    results["T"] = "T2"
-                else:
-                    results["T"] = "T3"
-            else:
-                t_value = match.group(1)
-                if t_value:
-                    results["T"] = t_value.upper()
-                    break
+                # Special handling for each category
+                if category == 'T':
+                    if 'ISDCIS' in value:
+                        value = 'is (DCIS)'
+                    elif 'ISPAGET' in value:
+                        value = 'is (PAGET)'
+                    elif 'MI' in value or 'MICROINVASIVE' in value:
+                        value = '1mi'
+                
+                if category == 'N' and ('MI' in value or 'MICRO' in value):
+                    value = '1mi'
+                
+                if category == 'M':
+                    if value in ['PRESENT', 'YES']:
+                        value = '1'
+                    elif value in ['ABSENT', 'NO']:
+                        value = '0'
+                
+                # Only update if we found a better match (longer/more specific)
+                if not result[category] or len(value) > len(result[category]):
+                    result[category] = value.upper()
     
-    # Process N stage with node count logic
-    for pattern in n_patterns:
-        matches = re.finditer(pattern, text, re.IGNORECASE | re.MULTILINE)
-        for match in matches:
-            if pattern == n_patterns[2]:  # Node count pattern
-                pos_nodes = int(match.group(1))
-                if pos_nodes == 0:
-                    results["N"] = "N0"
-                elif pos_nodes <= 3:
-                    results["N"] = "N1"
-                elif pos_nodes <= 9:
-                    results["N"] = "N2a"
-                else:
-                    results["N"] = "N3a"
-            else:
-                n_value = match.group(1)
-                if n_value:
-                    results["N"] = n_value.upper()
-                    break
+    # Post-processing validation
+    for category in result:
+        if result[category]:
+            # Remove invalid characters
+            result[category] = re.sub(r'[^0-9XISMIA-Z]', '', result[category])
+            # Convert numbers to consistent format
+            result[category] = re.sub(r'(\d)([A-Z])', r'\1\2', result[category])
     
-    # Process M stage with context analysis
-    for pattern in m_patterns:
-        matches = re.finditer(pattern, text, re.IGNORECASE | re.MULTILINE)
-        for match in matches:
-            if pattern == m_patterns[3]:  # No metastasis pattern
-                if 'without' in match.group() or 'no evidence' in match.group().lower():
-                    results["M"] = "M0"
-            else:
-                m_value = match.group(1) if len(match.groups()) > 0 else None
-                if m_value:
-                    results["M"] = m_value.upper()
-                    break
+    # Handle special cases
+    if result['M'] and 'METASTASIS' in report_text.upper() and 'PRESENT' in report_text.upper():
+        result['M'] = '1'
+    if result['M'] and 'METASTASIS' in report_text.upper() and 'ABSENT' in report_text.upper():
+        result['M'] = '0'
     
-    return results
+    return result
 
 
 
@@ -412,80 +404,72 @@ def highlight_matches_in_pdf(input_path, output_path, tnm_dict, matched_stages):
 
 # Improved stage determination function
 def determine_overall_stage(matched_stages):
+    """Determine overall cancer stage from TNM using AJCC 8th edition guidelines"""
     t_stage = matched_stages.get("T")
     n_stage = matched_stages.get("N")
     m_stage = matched_stages.get("M")
-    
-    # Input validation and normalization
-    def normalize_stage(stage):
-        if not stage:
-            return None
-        stage = stage.upper().strip()
-        # Remove prefixes if present
-        if not any(stage.startswith(x) for x in ["T", "N", "M"]):
-            for prefix in ["T", "N", "M"]:
-                if prefix in stage:
-                    stage = stage[stage.find(prefix):]
-                    break
-        return stage
-    
-    t_stage = normalize_stage(t_stage)
-    n_stage = normalize_stage(n_stage)
-    m_stage = normalize_stage(m_stage)
-    
-    # Metastatic disease is always Stage IV
+
+    # Convert to uppercase for case-insensitive comparison
+    t_stage = t_stage.upper() if t_stage else None
+    n_stage = n_stage.upper() if n_stage else None
+    m_stage = m_stage.upper() if m_stage else None
+
+    # Handle metastatic cases first (M1 is always Stage IV)
     if m_stage == "M1":
-        return "Stage IV"
+        return "Stage IV (Metastatic)"
     
-    # Enhanced staging logic based on AJCC 8th edition
-    if t_stage and n_stage:
-        # Stage 0
-        if t_stage in ["TIS", "TIS(DCIS)", "TIS(PAGET)"]:
-            return "Stage 0"
-        
-        # Stage IA
-        if t_stage in ["T1", "T1MI", "T1A", "T1B", "T1C"] and n_stage == "N0":
-            return "Stage IA"
-        
-        # Stage IB
-        if (t_stage in ["T0", "T1", "T1MI", "T1A", "T1B", "T1C"] and 
-            n_stage in ["N1MI", "N1MIC"]):
-            return "Stage IB"
-        
-        # Stage IIA
-        if ((t_stage in ["T0", "T1", "T1MI", "T1A", "T1B", "T1C"] and 
-             n_stage in ["N1", "N1A", "N1B", "N1C"]) or
-            (t_stage == "T2" and n_stage == "N0")):
-            return "Stage IIA"
-        
-        # Stage IIB
-        if ((t_stage == "T2" and n_stage in ["N1", "N1A", "N1B", "N1C"]) or
-            (t_stage == "T3" and n_stage == "N0")):
-            return "Stage IIB"
-        
-        # Stage IIIA
-        if ((t_stage in ["T0", "T1", "T1MI", "T1A", "T1B", "T1C", "T2"] and 
-             n_stage in ["N2", "N2A", "N2B"]) or
-            (t_stage == "T3" and n_stage in ["N1", "N1A", "N1B", "N1C", "N2", "N2A", "N2B"])):
-            return "Stage IIIA"
-        
-        # Stage IIIB
-        if (t_stage in ["T4", "T4A", "T4B", "T4C"] and 
-            n_stage in ["N0", "N1", "N1A", "N1B", "N1C", "N2", "N2A", "N2B"]):
-            return "Stage IIIB"
-        
-        # Stage IIIC
-        if n_stage in ["N3", "N3A", "N3B", "N3C"]:
-            return "Stage IIIC"
-        
-        # Special case for inflammatory breast cancer
-        if t_stage in ["T4D", "T4"]:
-            if n_stage in ["N0", "N1", "N1A", "N1B", "N1C", "N2", "N2A", "N2B"]:
-                return "Stage IIIB"
-            elif n_stage in ["N3", "N3A", "N3B", "N3C"]:
-                return "Stage IIIC"
+    # Handle cases where we can't determine stage
+    if not t_stage or not n_stage:
+        return "Stage Not Determined (Insufficient TNM data)"
+
+    # STAGE 0 (Tis N0 M0)
+    if t_stage in ["TIS", "TIS (DCIS)", "TIS (PAGET)"] and n_stage == "N0":
+        return "Stage 0 (In Situ)"
     
-    return "Stage Not Determined"
+    # STAGE IA (T1 N0 M0)
+    if t_stage in ["T1", "T1MI", "T1A", "T1B", "T1C"] and n_stage == "N0":
+        return "Stage IA"
+    
+    # STAGE IB (T0/T1 N1mi M0)
+    if (t_stage in ["T0", "T1", "T1MI", "T1A", "T1B", "T1C"] and 
+        n_stage in ["N1MI", "N1MIC"]):
+        return "Stage IB (Microscopic nodal involvement)"
+    
+    # STAGE IIA (T0/T1 N1 M0 OR T2 N0 M0)
+    if ((t_stage in ["T0", "T1", "T1MI", "T1A", "T1B", "T1C"] and 
+         n_stage in ["N1", "N1A", "N1B", "N1C"]) or
+        (t_stage == "T2" and n_stage == "N0")):
+        return "Stage IIA"
+    
+    # STAGE IIB (T2 N1 M0 OR T3 N0 M0)
+    if ((t_stage == "T2" and n_stage in ["N1", "N1A", "N1B", "N1C"]) or
+        (t_stage == "T3" and n_stage == "N0")):
+        return "Stage IIB"
+    
+    # STAGE IIIA (T0-T2 N2 M0 OR T3 N1-N2 M0)
+    if ((t_stage in ["T0", "T1", "T1MI", "T1A", "T1B", "T1C", "T2"] and 
+         n_stage in ["N2", "N2A", "N2B"]) or
+        (t_stage == "T3" and n_stage in ["N1", "N1A", "N1B", "N1C", "N2", "N2A", "N2B"])):
+        return "Stage IIIA"
+    
+    # STAGE IIIB (T4 N0-N2 M0)
+    if (t_stage in ["T4", "T4A", "T4B", "T4C"] and 
+        n_stage in ["N0", "N1", "N1A", "N1B", "N1C", "N2", "N2A", "N2B"]):
+        return "Stage IIIB (Locally Advanced)"
+    
+    # STAGE IIIC (Any T N3 M0)
+    if n_stage in ["N3", "N3A", "N3B", "N3C"]:
+        return "Stage IIIC (Extensive Nodal Involvement)"
+    
+    # Inflammatory breast cancer (T4d)
+    if t_stage in ["T4D", "T4"]:
+        if n_stage in ["N0", "N1", "N1A", "N1B", "N1C", "N2", "N2A", "N2B"]:
+            return "Stage IIIB (Inflammatory)"
+        elif n_stage in ["N3", "N3A", "N3B", "N3C"]:
+            return "Stage IIIC (Inflammatory with N3)"
+    
+    # If we get here, the stage couldn't be determined
+    return "Stage Not Determined (Unmatched TNM Combination)"
 
 
 
@@ -499,69 +483,6 @@ def get_extended_context(text, target, window_size=200):
     start = max(0, pos - window_size)
     end = min(len(text), pos + len(target) + window_size)
     return text[start:end]
-
-
-
-def calculate_confidence_score(stages):
-    """Calculate confidence score for the extracted stages"""
-    score = 0
-    total_weight = 0
-    
-    # Weight for each stage type
-    weights = {"T": 0.4, "N": 0.4, "M": 0.2}
-    
-    for stage_type, stage_value in stages.items():
-        if stage_type in weights:
-            weight = weights[stage_type]
-            total_weight += weight
-            
-            if stage_value:
-                # Add to score based on confidence in the stage
-                if stage_type in ["T", "N", "M"]:
-                    context_score = 1.0  # Base score for having a value
-                    details = next((d for d in stages.get("Details", []) if d["Stage"] == stage_value), None)
-                    
-                    if details:
-                        # Add bonus for high-scoring matches
-                        matches = details.get("Matched Phrases", [])
-                        if matches:
-                            avg_score = sum(m["Score"] for m in matches) / len(matches)
-                            context_score = min(1.0, avg_score / 100)
-                    
-                    score += weight * context_score
-    
-    # Normalize score to percentage
-    final_score = (score / total_weight) * 100 if total_weight > 0 else 0
-    return round(final_score, 2)
-
-
-
-def create_summary_statistics(df):
-    """Create summary statistics from the results"""
-    stats = {
-        'Total Files Processed': len(df),
-        'Successfully Processed': len(df[df['Processing Status'] == 'Success']),
-        'Partial Success': len(df[df['Processing Status'].str.contains('Partial', na=False)]),
-        'Failed': len(df[df['Processing Status'].str.contains('Failed', na=False)]),
-        'Average Confidence Score': df['Confidence Level'].mean(),
-        'Files with Complete TNM Staging': len(df[
-            (df['T Stage'] != 'Not Found') & 
-            (df['N Stage'] != 'Not Found') & 
-            (df['M Stage'] != 'Not Found')
-        ])
-    }
-    return pd.DataFrame(list(stats.items()), columns=['Metric', 'Value'])
-
-
-
-def create_processing_log(df):
-    """Create a processing log with details about each file"""
-    log_data = df[['File Name', 'Processing Status', 'Processing Date', 'Confidence Level']].copy()
-    log_data['Status Details'] = df.apply(
-        lambda row: f"TNM Stages Found: {sum(1 for stage in ['T Stage', 'N Stage', 'M Stage'] if row[stage] != 'Not Found')}/3",
-        axis=1
-    )
-    return log_data
 
 
 
@@ -590,47 +511,6 @@ def validate_tnm_stages(matched_stages, report_text):
             validated["M"] = None
     
     return validated
-
-
-
-def calculate_accuracy_metrics(all_data):
-    """Calculate accuracy metrics for the extraction process"""
-    total_files = len(all_data)
-    successful_extractions = 0
-    stage_completeness = 0
-    confidence_scores = []
-    
-    for data in all_data:
-        # Check if all stages were found
-        stages_found = sum(1 for stage in ['T Stage', 'N Stage', 'M Stage'] 
-                         if data[stage] not in ['Not Found', 'Error'])
-        stage_completeness += stages_found / 3
-        
-        # Check if overall stage was determined
-        if data['Overall Cancer Stage'] not in ['Not Found', 'Error', 'Stage Not Determined']:
-            successful_extractions += 1
-        
-        # Add confidence score
-        if isinstance(data.get('Confidence Level'), (int, float)):
-            confidence_scores.append(data['Confidence Level'])
-    
-    metrics = {
-        'Total Files Processed': total_files,
-        'Successful Stage Determinations': successful_extractions,
-        'Overall Success Rate': (successful_extractions / total_files) * 100 if total_files > 0 else 0,
-        'Stage Completeness': (stage_completeness / total_files) * 100 if total_files > 0 else 0,
-        'Average Confidence Score': sum(confidence_scores) / len(confidence_scores) if confidence_scores else 0
-    }
-    
-    # Print accuracy metrics
-    print("\nAccuracy Metrics:")
-    print(f"Total Files Processed: {metrics['Total Files Processed']}")
-    print(f"Successful Stage Determinations: {metrics['Successful Stage Determinations']}")
-    print(f"Overall Success Rate: {metrics['Overall Success Rate']:.2f}%")
-    print(f"Stage Completeness: {metrics['Stage Completeness']:.2f}%")
-    print(f"Average Confidence Score: {metrics['Average Confidence Score']:.2f}%")
-    
-    return metrics
 
 
 
@@ -698,10 +578,7 @@ def process_folder_with_pdfs(input_folder, output_folder):
                 "T Stage": validated_stages["T"] if validated_stages["T"] else "Not Found",
                 "N Stage": validated_stages["N"] if validated_stages["N"] else "Not Found",
                 "M Stage": validated_stages["M"] if validated_stages["M"] else "Not Found",
-                "Overall Cancer Stage": overall_stage,
-                "Confidence Level": calculate_confidence_score(validated_stages),
-                "Processing Status": "Success" if highlight_success else "Partial Success",
-                "Processing Date": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                "Overall Cancer Stage": overall_stage
             }
             
             all_data.append(result_data)
@@ -715,9 +592,7 @@ def process_folder_with_pdfs(input_folder, output_folder):
                 "N Stage": "Error",
                 "M Stage": "Error",
                 "Overall Cancer Stage": "Error",
-                "Confidence Level": 0,
-                "Processing Status": f"Failed - {str(e)}",
-                "Processing Date": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                "Confidence Level": 0
             })
     
     # Save results to Excel with multiple sheets
@@ -727,91 +602,12 @@ def process_folder_with_pdfs(input_folder, output_folder):
             # Main results sheet
             df_main = pd.DataFrame(all_data)
             df_main.to_excel(writer, sheet_name='TNM Results', index=False)
-            
-            # Summary statistics sheet
-            create_summary_statistics(df_main).to_excel(writer, sheet_name='Summary Statistics')
-            
-            # Processing log sheet
-            create_processing_log(df_main).to_excel(writer, sheet_name='Processing Log')
         
         print(f"\nDetailed results saved to: {excel_path}")
         return True
         
     except Exception as e:
         print(f"Error saving results to Excel: {e}")
-        return False
-
-
-
-def process_single_pdf(pdf_path, output_folder):
-    # Ensure output folder exists
-    os.makedirs(output_folder, exist_ok=True)
-    
-    print(f"\nProcessing file: {os.path.basename(pdf_path)}")
-    
-    # Extract text from PDF or fallback to OCR
-    report_text = extract_text_from_pdf(pdf_path)
-    if not report_text.strip():
-        print("No text extracted from PDF. Attempting OCR...")
-        report_text = ocr_from_image(pdf_path)
-    
-    if not report_text.strip():
-        print(f"WARNING: Could not extract any text from {os.path.basename(pdf_path)}, skipping.")
-        return {
-            "File Name": os.path.basename(pdf_path),
-            "Age": "Not Found",
-            "T Stage": "Not Found",
-            "N Stage": "Not Found", 
-            "M Stage": "Not Found",
-            "Overall Cancer Stage": "Not Found",
-            "Status": "Failed - No text extracted"
-        }
-    
-    # Extract age or calculate from DOB
-    age = extract_age_or_dob(report_text)
-    print(f"Patient Age: {age if age else 'Not Found'}")
-
-    # Extract TNM stages
-    matched_stages = improved_fuzzy_match(report_text, ajcc_tnm)
-    
-    print("Matched TNM Stages:")
-    for key, value in matched_stages.items():
-        if key != "Details":
-            print(f"  {key} Stage: {value if value else 'Not Found'}")
-
-    # Determine overall cancer stage
-    overall_stage = determine_overall_stage(matched_stages)
-    print(f"Overall Cancer Stage: {overall_stage}")
-
-    # Prepare output file path for highlighted PDF
-    pdf_name = os.path.basename(pdf_path)
-    base_name, _ = os.path.splitext(pdf_name)
-    highlight_path = os.path.join(output_folder, f"{base_name}_highlighted.pdf")
-    
-    # Highlight matches in the PDF
-    print(f"Highlighting matches and saving to: {highlight_path}")
-    highlight_success = highlight_matches_in_pdf(pdf_path, highlight_path, ajcc_tnm, matched_stages)
-    
-    # Prepare data for Excel
-    data = {
-        "File Name": pdf_name,
-        "Age": age if age else "Not Found",
-        "T Stage": matched_stages["T"] if matched_stages["T"] else "Not Found",
-        "N Stage": matched_stages["N"] if matched_stages["N"] else "Not Found", 
-        "M Stage": matched_stages["M"] if matched_stages["M"] else "Not Found",
-        "Overall Cancer Stage": overall_stage,
-        "Status": "Successfully Processed" if highlight_success else "Partial Processing - Highlighting Failed"
-    }
-    
-    # Save data to Excel
-    excel_path = os.path.join(output_folder, f"{base_name}_TNM_data.xlsx")
-    try:
-        df = pd.DataFrame([data])
-        df.to_excel(excel_path, index=False, engine="openpyxl")
-        print(f"Summary data saved to: {excel_path}")
-        return True
-    except Exception as e:
-        print(f"Error saving summary data to Excel: {e}")
         return False
 
 
